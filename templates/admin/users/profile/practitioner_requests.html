@@ -1,0 +1,37 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Practitioner Account Requests</h1>
+    <p>Review pending practitioner registrations and either approve or dismiss them.</p>
+    {% if pending_profiles %}
+        <table id="result_list">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Institution</th>
+                    <th>Bio</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in pending_profiles %}
+                    <tr>
+                        <td>{{ profile.user.username }}</td>
+                        <td>{{ profile.user.email }}</td>
+                        <td>{{ profile.institution|default:"-" }}</td>
+                        <td>{{ profile.bio|default:"-"|truncatechars:120 }}</td>
+                        <td>
+                            <a class="button" href="{% url 'admin:users_profile_practitioner_approve' profile.id %}">Approve</a>
+                            <a class="button deletelink" href="{% url 'admin:users_profile_practitioner_dismiss' profile.id %}">Dismiss</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No pending practitioner requests right now.</p>
+    {% endif %}
+</div>
+{% endblock %}

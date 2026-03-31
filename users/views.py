@@ -54,7 +54,7 @@ def register_view(request):
             if selected_role == profile.PRACTITIONER:
                 messages.success(
                     request,
-                    'Your practitioner account request was submitted. An admin must approve it before you can log in.',
+                    'Request sent. Wait for admin approval before logging in as a practitioner.',
                 )
                 return redirect('login')
 
