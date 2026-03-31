@@ -250,7 +250,7 @@ textarea {
 .auth-form p { margin: 0 0 1rem; }
 .muted-text { color: var(--muted); }
 .rich-text p { line-height: 1.75; }
-.role-switch { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 1rem; }
+.role-switch { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 1rem; }
 
 .choice-group {
     display: grid;

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Case Study{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="panel auth-panel">
+        <h1>Delete case study</h1>
+        <p>Are you sure you want to delete "{{ case.title }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button class="button" type="submit">Delete</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

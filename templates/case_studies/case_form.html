@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="panel auth-panel wide-panel">
+        <h1>{{ page_title }}</h1>
+        <p class="muted-text">Ethical requirement: do not include patient names or identifying details. Submission is blocked unless anonymization is confirmed.</p>
+        <form method="post" enctype="multipart/form-data" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ formset.management_form }}
+            <h2>Media attachments</h2>
+            {% for media_form in formset %}
+                <div class="panel">
+                    {{ media_form.as_p }}
+                </div>
+            {% endfor %}
+            <button class="button" type="submit">Save case study</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

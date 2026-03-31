@@ -31,7 +31,7 @@
     {% endfor %}
 </section>
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and not user.profile.is_practitioner %}
 <section class="section-grid">
     <article class="panel">
         <h2>Want to upload a note?</h2>

@@ -43,7 +43,7 @@
     {% endfor %}
 </section>
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and not user.profile.is_practitioner %}
 <section class="panel">
     <div class="section-heading">
         <h2>Upload a past paper</h2>

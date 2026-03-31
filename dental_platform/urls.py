@@ -17,6 +17,7 @@ urlpatterns = [
     path('', include('users.urls')),
     path('', include('notes.urls')),
     path('', include('quizzes.urls')),
+    path('', include('case_studies.urls')),
     path('past-papers/', include('papers.urls')),
     path('contribute/', include('contributions.urls')),
     path('login/', CustomLoginView.as_view(), name='login'),

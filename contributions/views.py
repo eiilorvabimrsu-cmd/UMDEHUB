@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -18,6 +19,12 @@ from .utils import extract_text_from_docx, extract_text_from_pdf, parse_question
 
 def staff_required(view_func):
     return user_passes_test(lambda user: user.is_staff)(view_func)
+
+
+def _block_practitioner_contributions(request):
+    if hasattr(request.user, 'profile') and request.user.profile.is_practitioner and not request.user.is_staff:
+        return HttpResponseForbidden('Practitioners can only upload and manage case studies.')
+    return None
 
 
 def _process_import_batch(batch):
@@ -60,11 +67,17 @@ def _process_import_batch(batch):
 
 @login_required
 def contribution_home(request):
+    blocked = _block_practitioner_contributions(request)
+    if blocked:
+        return blocked
     submissions = request.user.contributions.select_related('subject', 'topic')[:8]
     return render(request, 'contributions/home.html', {'submissions': submissions})
 
 
 def _save_contribution(request, form_class, contribution_type, template_name, success_message):
+    blocked = _block_practitioner_contributions(request)
+    if blocked:
+        return blocked
     if request.method == 'POST':
         form = form_class(request.POST, request.FILES)
         if form.is_valid():

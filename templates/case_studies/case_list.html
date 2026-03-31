@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Case Studies{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Practitioner case studies</span>
+        <h1>Clinical learning from real anonymized cases</h1>
+        <p>Students can review approved clinical cases. Practitioners can submit case studies after confirming anonymization.</p>
+    </div>
+    {% if user.is_authenticated and user.profile.is_practitioner and user.profile.practitioner_approved %}
+        <div class="header-actions">
+            <a class="button" href="{% url 'case_studies:case_create' %}">Upload case study</a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="card-grid">
+    {% for case in cases %}
+        <article class="panel">
+            <h2>{{ case.title }}</h2>
+            <p>{{ case.patient_age }} years • {{ case.get_patient_gender_display }}</p>
+            <p>Status: {{ case.get_status_display }}</p>
+            <p>{{ case.diagnosis|truncatechars:140 }}</p>
+            <a href="{% url 'case_studies:case_detail' case.id %}">View case</a>
+        </article>
+    {% empty %}
+        <p>No case studies are available yet.</p>
+    {% endfor %}
+</section>
+{% endblock %}

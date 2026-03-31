@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Practitioner Dashboard{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Practitioner workspace</span>
+        <h1>Your clinical case studies</h1>
+        <p>Upload anonymized cases, track moderation status, and review admin feedback.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button" href="{% url 'case_studies:case_create' %}">Upload new case</a>
+    </div>
+</section>
+
+<section class="card-grid">
+    {% for case in cases %}
+        <article class="panel">
+            <h2>{{ case.title }}</h2>
+            <p>Status: {{ case.get_status_display }}</p>
+            <p>{{ case.admin_feedback|default:"No admin feedback yet."|truncatechars:120 }}</p>
+            <div class="stack-actions">
+                <a href="{% url 'case_studies:case_detail' case.id %}">View</a>
+                <a href="{% url 'case_studies:case_edit' case.id %}">Edit</a>
+                <a href="{% url 'case_studies:case_delete' case.id %}">Delete</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>You have not uploaded any case studies yet.</p>
+    {% endfor %}
+</section>
+{% endblock %}

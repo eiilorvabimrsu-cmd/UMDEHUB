@@ -6,11 +6,17 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
 from .bootstrap import ensure_bootstrap_admin_user
-from .forms import ProfileForm, UserProfileForm, UserRegistrationForm
+from .forms import (
+    ProfileForm,
+    RoleAwareAuthenticationForm,
+    UserProfileForm,
+    UserRegistrationForm,
+)
 
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
+    authentication_form = RoleAwareAuthenticationForm
 
     def dispatch(self, request, *args, **kwargs):
         ensure_bootstrap_admin_user()
@@ -20,6 +26,8 @@ class CustomLoginView(LoginView):
         user = self.request.user
         if user.is_staff:
             return reverse_lazy('admin:index')
+        if getattr(user, 'profile', None) and user.profile.is_practitioner:
+            return reverse_lazy('case_studies:practitioner_dashboard')
         return reverse_lazy('dashboard:overview')
 
     def get_context_data(self, **kwargs):
@@ -36,8 +44,21 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            profile = user.profile
+            selected_role = form.cleaned_data['role']
+            profile.role = selected_role
+            profile.practitioner_approved = selected_role == profile.STUDENT
+            profile.save()
+
+            if selected_role == profile.PRACTITIONER:
+                messages.success(
+                    request,
+                    'Your practitioner account request was submitted. An admin must approve it before you can log in.',
+                )
+                return redirect('login')
+
             login(request, user)
-            messages.success(request, 'Welcome to the Dental Learning Platform.')
+            messages.success(request, 'Welcome to UMOL\'S DENTAL HUB.')
             return redirect('dashboard:overview')
     else:
         form = UserRegistrationForm()

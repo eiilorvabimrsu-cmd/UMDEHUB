@@ -8,7 +8,8 @@
         <h1>Login</h1>
         <p>Choose how you want to enter the platform. Admin accounts open the administration area, while student accounts go to the learning dashboard.</p>
         <div class="role-switch">
-            <a class="button {% if selected_role == 'admin' %}button-secondary{% endif %}" href="{% url 'login' %}?role=student">Login as Student</a>
+            <a class="button {% if selected_role != 'student' %}button-secondary{% endif %}" href="{% url 'login' %}?role=student">Login as Student</a>
+            <a class="button {% if selected_role != 'practitioner' %}button-secondary{% endif %}" href="{% url 'login' %}?role=practitioner">Login as Practitioner</a>
             <a class="button {% if selected_role != 'admin' %}button-secondary{% endif %}" href="{% url 'login' %}?role=admin">Login as Admin</a>
         </div>
         <form method="post" class="auth-form">
@@ -16,7 +17,7 @@
             <input type="hidden" name="login_role" value="{{ selected_role }}">
             {{ form.as_p }}
             <button class="button" type="submit">
-                {% if selected_role == 'admin' %}Continue to Admin{% else %}Continue as Student{% endif %}
+                {% if selected_role == 'admin' %}Continue to Admin{% elif selected_role == 'practitioner' %}Continue as Practitioner{% else %}Continue as Student{% endif %}
             </button>
         </form>
         <p class="muted-text">New here? <a href="{% url 'users:register' %}">Create an account</a></p>

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'papers',
     'dashboard',
     'contributions',
+    'case_studies',
 ]
 
 MIDDLEWARE = [

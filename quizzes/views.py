@@ -4,6 +4,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -15,6 +16,10 @@ QUIZ_MIN_QUESTIONS = 5
 QUIZ_MAX_QUESTIONS = 10
 MOCK_QUESTION_COUNT = 20
 MOCK_DURATION_SECONDS = 30 * 60
+
+
+def _block_practitioners(user):
+    return hasattr(user, 'profile') and user.profile.is_practitioner and not user.is_staff
 
 
 def _pick_questions(queryset, count):
@@ -94,6 +99,8 @@ def _save_result(user, questions, review_items, quiz_type, topic=None, duration_
 
 @login_required
 def topic_quiz(request, topic_id):
+    if _block_practitioners(request.user):
+        return HttpResponseForbidden('Practitioners can access notes, past papers, and case studies only.')
     topic = get_object_or_404(Topic.objects.select_related('subject'), pk=topic_id)
     questions = _pick_questions(topic.questions.all(), QUIZ_MAX_QUESTIONS)
     if len(questions) < QUIZ_MIN_QUESTIONS:
@@ -125,6 +132,8 @@ def topic_quiz(request, topic_id):
 
 @login_required
 def random_quiz(request):
+    if _block_practitioners(request.user):
+        return HttpResponseForbidden('Practitioners can access notes, past papers, and case studies only.')
     subject_id = request.GET.get('subject')
     question_pool = Question.objects.select_related('subject', 'topic').all()
     selected_subject = None
@@ -164,6 +173,8 @@ def random_quiz(request):
 
 @login_required
 def mock_exam(request):
+    if _block_practitioners(request.user):
+        return HttpResponseForbidden('Practitioners can access notes, past papers, and case studies only.')
     questions = _pick_questions(Question.objects.select_related('subject', 'topic').all(), MOCK_QUESTION_COUNT)
     if len(questions) < QUIZ_MIN_QUESTIONS:
         messages.warning(request, 'Add more questions before running the mock exam.')
@@ -205,5 +216,7 @@ def mock_exam(request):
 
 @login_required
 def result_history(request):
+    if _block_practitioners(request.user):
+        return HttpResponseForbidden('Practitioners can access notes, past papers, and case studies only.')
     results = request.user.results.select_related('subject', 'topic')
     return render(request, 'quizzes/result_history.html', {'results': results})

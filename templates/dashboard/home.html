@@ -10,6 +10,7 @@
         <p>Strengthen your clinical theory with topic-based revision, instant quiz feedback, and performance tracking designed for dental students.</p>
         <div class="hero-actions">
             <a class="button" href="{% url 'login' %}?role=student">Login as Student</a>
+            <a class="button button-secondary" href="{% url 'login' %}?role=practitioner">Login as Practitioner</a>
             <a class="button button-secondary" href="{% url 'login' %}?role=admin">Login as Admin</a>
             <a class="button button-secondary" href="{% url 'users:register' %}">Register</a>
         </div>
@@ -68,10 +69,17 @@
 
 <section class="section-grid">
     <article class="panel">
-        <h2>Contribute notes or past papers</h2>
-        <p>Logged-in students can upload notes, past papers, video suggestions, and new topic ideas for admin approval.</p>
-        <a class="button" href="{% url 'contributions:home' %}">Open contribution hub</a>
+        <h2>Learn from practitioner case studies</h2>
+        <p>Students can review approved real-world clinical cases, while practitioners can upload moderated anonymized cases.</p>
+        <a class="button" href="{% url 'case_studies:case_list' %}">Explore case studies</a>
     </article>
+    {% if not user.is_authenticated or not user.profile.is_practitioner %}
+        <article class="panel">
+            <h2>Contribute notes or past papers</h2>
+            <p>Logged-in students can upload notes, past papers, video suggestions, and new topic ideas for admin approval.</p>
+            <a class="button" href="{% url 'contributions:home' %}">Open contribution hub</a>
+        </article>
+    {% endif %}
     <article class="panel">
         <h2>Import practice questions</h2>
         <p>Staff can upload DOCX or text-based PDF files and turn them into quiz questions after choosing the correct answers.</p>

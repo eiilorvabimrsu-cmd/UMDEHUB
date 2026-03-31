@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ case.title }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Case study</span>
+        <h1>{{ case.title }}</h1>
+        <p>Practitioner: {{ case.practitioner.username }} • Status: {{ case.get_status_display }}</p>
+    </div>
+</section>
+
+<section class="content-stack">
+    <article class="panel"><h2>Chief complaint</h2><p>{{ case.chief_complaint|linebreaks }}</p></article>
+    <article class="panel"><h2>Diagnosis</h2><p>{{ case.diagnosis|linebreaks }}</p></article>
+    <article class="panel"><h2>Treatment plan</h2><p>{{ case.treatment_plan|linebreaks }}</p></article>
+    <article class="panel"><h2>Management steps</h2><p>{{ case.management_steps|linebreaks }}</p></article>
+    <article class="panel"><h2>Discussion and learning points</h2><p>{{ case.discussion|linebreaks }}</p></article>
+    {% if case.admin_feedback %}
+        <article class="panel"><h2>Admin feedback</h2><p>{{ case.admin_feedback|linebreaks }}</p></article>
+    {% endif %}
+    <article class="panel">
+        <h2>Case media</h2>
+        <div class="list-stack">
+            {% for media in case.media.all %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ media.get_media_type_display }}</strong>
+                        <p>{{ media.file.name }}</p>
+                    </div>
+                    <a class="button button-sm" href="{{ media.file.url }}" target="_blank" rel="noopener">Open file</a>
+                </div>
+            {% empty %}
+                <p>No media uploaded for this case.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

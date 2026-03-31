@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg, Count
+from django.http import HttpResponseForbidden
 from django.views.generic import TemplateView
 
 from notes.models import Subject, Topic
@@ -23,6 +24,11 @@ class HomeView(TemplateView):
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if hasattr(request.user, 'profile') and request.user.profile.is_practitioner and not request.user.is_staff:
+            return HttpResponseForbidden('Practitioners do not have access to the student dashboard.')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
