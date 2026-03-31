@@ -12,7 +12,6 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'role', 'practitioner_approved', 'institution', 'year_of_study')
     list_filter = ('role', 'practitioner_approved')
     search_fields = ('user__username', 'full_name', 'institution')
-    change_list_template = 'admin/users/profile/change_list.html'
     actions = ['approve_practitioners', 'dismiss_practitioners']
 
     def get_urls(self):
