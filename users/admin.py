@@ -41,12 +41,12 @@ class ProfileAdmin(admin.ModelAdmin):
             role=Profile.PRACTITIONER,
             practitioner_approved=False,
         )
-        context = {
-            **self.admin_site.each_context(request),
+        context = self.admin_site.each_context(request)
+        context.update({
             'opts': self.model._meta,
             'title': 'Practitioner Account Requests',
             'pending_profiles': pending_profiles,
-        }
+        })
         return TemplateResponse(request, 'admin/users/profile/practitioner_requests.html', context)
 
     def approve_request_view(self, request, profile_id):
