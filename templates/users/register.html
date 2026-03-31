@@ -4,13 +4,19 @@
 
 {% block content %}
 <section class="auth-shell">
-    <article class="panel auth-panel">
+    <article class="panel auth-panel wide-panel">
         <h1>Create student account</h1>
-        <p>Set up your profile to start saving quiz scores and tracking weak topics.</p>
+        <p>Create a student or practitioner account. Practitioner accounts require admin approval before login is allowed.</p>
+        <div class="role-switch">
+            <a class="button {% if selected_role != 'student' %}button-secondary{% endif %}" href="{% url 'users:register' %}?role=student">Register as Student</a>
+            <a class="button {% if selected_role != 'practitioner' %}button-secondary{% endif %}" href="{% url 'users:register' %}?role=practitioner">Register as Practitioner</a>
+        </div>
         <form method="post" class="auth-form">
             {% csrf_token %}
             {{ form.as_p }}
-            <button class="button" type="submit">Register</button>
+            <button class="button" type="submit">
+                {% if selected_role == 'practitioner' %}Request Practitioner Account{% else %}Register{% endif %}
+            </button>
         </form>
         <p class="muted-text">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
     </article>

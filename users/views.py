@@ -40,6 +40,7 @@ def register_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard:overview')
 
+    initial_role = request.GET.get('role')
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -61,9 +62,9 @@ def register_view(request):
             messages.success(request, 'Welcome to UMOL\'S DENTAL HUB.')
             return redirect('dashboard:overview')
     else:
-        form = UserRegistrationForm()
+        form = UserRegistrationForm(initial={'role': initial_role} if initial_role else None)
 
-    return render(request, 'users/register.html', {'form': form})
+    return render(request, 'users/register.html', {'form': form, 'selected_role': initial_role or 'student'})
 
 
 @login_required

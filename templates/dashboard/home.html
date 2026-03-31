@@ -73,6 +73,11 @@
         <p>Students can review approved real-world clinical cases, while practitioners can upload moderated anonymized cases.</p>
         <a class="button" href="{% url 'case_studies:case_list' %}">Explore case studies</a>
     </article>
+    <article class="panel">
+        <h2>Practitioner sign up</h2>
+        <p>Dental therapists and dental surgeons can request practitioner accounts. Admin approval is required before practitioner login is enabled.</p>
+        <a class="button button-secondary" href="{% url 'users:register' %}?role=practitioner">Register as Practitioner</a>
+    </article>
     {% if not user.is_authenticated or not user.profile.is_practitioner %}
         <article class="panel">
             <h2>Contribute notes or past papers</h2>
