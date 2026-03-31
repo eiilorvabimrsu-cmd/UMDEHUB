@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Contribute{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Community contributions</span>
+        <h1>Help improve UMOL'S DENTAL HUB</h1>
+        <p>Students can submit notes, videos, topic ideas, and past papers. Every contribution is reviewed by the admin team before publication.</p>
+    </div>
+    {% if user.is_staff %}
+        <div class="header-actions">
+            <a class="button" href="{% url 'contributions:import_questions' %}">Import questions from DOCX/PDF</a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="card-grid">
+    <article class="panel">
+        <h2>Upload notes</h2>
+        <p>Share revision notes for an existing topic by typing them directly or uploading a DOCX or text-based PDF.</p>
+        <a href="{% url 'contributions:note' %}">Submit note</a>
+    </article>
+    <article class="panel">
+        <h2>Suggest study videos</h2>
+        <p>Recommend useful YouTube videos tied to a subject or topic.</p>
+        <a href="{% url 'contributions:video' %}">Suggest video</a>
+    </article>
+    <article class="panel">
+        <h2>Suggest a new topic</h2>
+        <p>Recommend missing topics that should be added to a subject.</p>
+        <a href="{% url 'contributions:topic' %}">Suggest topic</a>
+    </article>
+    <article class="panel">
+        <h2>Upload past papers</h2>
+        <p>Send in past papers for admin verification and publication.</p>
+        <a href="{% url 'contributions:paper' %}">Upload paper</a>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="section-heading">
+        <h2>Your recent submissions</h2>
+        <span>Status tracker</span>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Subject / Topic</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in submissions %}
+                    <tr>
+                        <td>{{ item.get_contribution_type_display }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.get_status_display }}</td>
+                        <td>
+                            {% if item.topic %}
+                                {{ item.topic.title }}
+                            {% elif item.subject %}
+                                {{ item.subject.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">You have not submitted any contributions yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

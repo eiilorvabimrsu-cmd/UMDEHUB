@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Profile</span>
+        <h1>Manage your student profile</h1>
+        <p>Keep your account details current so your learning history stays organized.</p>
+    </div>
+</section>
+
+<section class="auth-shell">
+    <article class="panel auth-panel wide-panel">
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <h2>Account details</h2>
+            {{ user_form.as_p }}
+            <h2>Academic profile</h2>
+            {{ profile_form.as_p }}
+            <button class="button" type="submit">Save changes</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

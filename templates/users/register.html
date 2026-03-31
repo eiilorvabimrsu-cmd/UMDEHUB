@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="panel auth-panel">
+        <h1>Create student account</h1>
+        <p>Set up your profile to start saving quiz scores and tracking weak topics.</p>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button" type="submit">Register</button>
+        </form>
+        <p class="muted-text">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </article>
+</section>
+{% endblock %}

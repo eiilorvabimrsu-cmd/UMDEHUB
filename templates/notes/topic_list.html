@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subject.name }} Topics{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ subject.name }}</span>
+        <h1>Topics</h1>
+        <p>{{ subject.description|default:"Browse the topics below to access notes and quizzes." }}</p>
+    </div>
+</section>
+
+<section class="card-grid">
+    {% for topic in subject.topics.all %}
+        <article class="panel">
+            <h2>{{ topic.title }}</h2>
+            <p>{{ topic.overview|default:"Topic summary can be added in the admin panel." }}</p>
+            <div class="stack-actions">
+                <a href="{{ topic.get_absolute_url }}">Read notes</a>
+                <a href="{% url 'quizzes:topic_quiz' topic.id %}">Start topic quiz</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>No topics available yet for this subject.</p>
+    {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz_title }} Results{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Results</span>
+        <h1>{{ quiz_title }}</h1>
+        <p>You scored {{ result.score }} out of {{ result.total_questions }} ({{ result.percentage }}%).</p>
+    </div>
+    <div class="hero-panel single-stat">
+        <div class="stat-card">
+            <strong>{{ result.percentage }}%</strong>
+            <span>Your score</span>
+        </div>
+    </div>
+</section>
+
+<section class="content-stack">
+    {% for item in review_items %}
+        <article class="panel review-card {% if item.is_correct %}review-correct{% else %}review-incorrect{% endif %}">
+            <div class="question-header">
+                <span>Question {{ forloop.counter }}</span>
+                <span>{% if item.is_correct %}Correct{% else %}Needs review{% endif %}</span>
+            </div>
+            <h2>{{ item.question.text }}</h2>
+            <div class="feedback-block">
+                <p><strong>Your answer:</strong> {{ item.selected_choice.text|default:"No answer selected" }}</p>
+                <p><strong>Correct answer:</strong> {{ item.correct_choice.text|default:"No correct choice configured" }}</p>
+                <p><strong>Explanation:</strong> {{ item.question.explanation|default:"Add an explanation in admin to improve feedback quality." }}</p>
+            </div>
+        </article>
+    {% endfor %}
+</section>
+{% endblock %}

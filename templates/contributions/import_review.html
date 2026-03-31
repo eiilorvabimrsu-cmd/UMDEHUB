@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Review Imported Questions{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Review imported batch</span>
+        <h1>{{ batch.title }}</h1>
+        <p>{{ batch.subject.name }} • {{ batch.topic.title }}. Click the correct answer for each question, add optional explanations, then publish.</p>
+    </div>
+</section>
+
+<form method="post" class="content-stack">
+    {% csrf_token %}
+    {% for question in questions %}
+        <article class="panel question-card">
+            <div class="question-header">
+                <span>Question {{ question.order }}</span>
+                {% if question.detected_answer_label %}
+                    <span>Detected answer: {{ question.detected_answer_label }}</span>
+                {% endif %}
+            </div>
+            <h2>{{ question.text }}</h2>
+            <div class="choice-group">
+                {% for choice in question.choices.all %}
+                    <label class="choice-item">
+                        <input type="radio" name="correct_{{ question.id }}" value="{{ choice.id }}" {% if choice.is_selected_correct %}checked{% endif %}>
+                        <span><strong>{{ choice.label }}.</strong> {{ choice.text }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            <label>
+                Explanation
+                <textarea name="explanation_{{ question.id }}" rows="4" placeholder="Optional feedback shown to students after submission.">{{ question.explanation }}</textarea>
+            </label>
+        </article>
+    {% endfor %}
+    <div class="header-actions">
+        <button class="button button-secondary" type="submit">Save correct answers</button>
+        <button class="button" type="submit" name="publish" value="1">Publish question set</button>
+    </div>
+</form>
+{% endblock %}

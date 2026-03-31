@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Performance dashboard</span>
+        <h1>Welcome back, {{ user.first_name|default:user.username }}</h1>
+        <p>Track revision momentum, identify weak areas, and keep moving toward exam readiness.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button button-secondary" href="{% url 'quizzes:random_quiz' %}">Take random quiz</a>
+        <a class="button" href="{% url 'quizzes:mock_exam' %}">Start mock exam</a>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="panel stat-panel">
+        <span>Total quizzes</span>
+        <strong>{{ total_quizzes }}</strong>
+    </article>
+    <article class="panel stat-panel">
+        <span>Average score</span>
+        <strong>{{ average_score }}%</strong>
+    </article>
+    <article class="panel stat-panel">
+        <span>Weak topics tracked</span>
+        <strong>{{ weak_topics|length }}</strong>
+    </article>
+    <article class="panel stat-panel">
+        <span>Recent activity</span>
+        <strong>{{ recent_activity|length }}</strong>
+    </article>
+</section>
+
+<section class="section-grid">
+    <article class="panel">
+        <div class="section-heading">
+            <h2>Weak topics</h2>
+            <span>Recommended for revision</span>
+        </div>
+        <div class="list-stack">
+            {% for topic in weak_topics %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ topic.topic__title }}</strong>
+                        <p>{{ topic.topic__subject__name }} • {{ topic.attempts }} attempts</p>
+                    </div>
+                    <span class="score-pill score-pill-low">{{ topic.avg_score|floatformat:1 }}%</span>
+                </div>
+            {% empty %}
+                <p>Take a few quizzes to unlock personalized weak-topic recommendations.</p>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading">
+            <h2>Recent activity</h2>
+            <a href="{% url 'quizzes:result_history' %}">Full history</a>
+        </div>
+        <div class="list-stack">
+            {% for result in recent_activity %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ result.get_quiz_type_display }}</strong>
+                        <p>
+                            {% if result.topic %}
+                                {{ result.topic.title }}
+                            {% elif result.subject %}
+                                {{ result.subject.name }}
+                            {% else %}
+                                Mixed topics
+                            {% endif %}
+                            • {{ result.date|date:"M d, Y H:i" }}
+                        </p>
+                    </div>
+                    <span class="score-pill">{{ result.percentage }}%</span>
+                </div>
+            {% empty %}
+                <p>No quiz activity yet.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<section class="section-grid">
+    <article class="panel">
+        <div class="section-heading">
+            <h2>Leaderboard</h2>
+            <span>Bonus feature</span>
+        </div>
+        <div class="list-stack">
+            {% for entry in leaderboard %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ forloop.counter }}. {{ entry.user__username }}</strong>
+                        <p>{{ entry.attempts }} recorded attempts</p>
+                    </div>
+                    <span class="score-pill">{{ entry.avg_score|floatformat:1 }}%</span>
+                </div>
+            {% empty %}
+                <p>The leaderboard will appear once students begin taking quizzes.</p>
+            {% endfor %}
+        </div>
+    </article>
+    <article class="panel highlight-panel">
+        <h2>Next best study action</h2>
+        <p>If your weak topics are filling up, revisit topic notes first, then retake a focused quiz before attempting another mock exam.</p>
+        <a class="button" href="{% url 'notes:subject_list' %}">Review notes</a>
+    </article>
+</section>
+{% endblock %}

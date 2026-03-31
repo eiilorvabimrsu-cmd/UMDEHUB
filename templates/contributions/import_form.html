@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Import Questions{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="panel auth-panel wide-panel">
+        <h1>Import questions from DOCX or PDF</h1>
+        <p>Only text-based PDFs are supported for question generation. Scanned PDFs will be flagged and should be uploaded to Past Papers instead.</p>
+        <form method="post" enctype="multipart/form-data" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button" type="submit">Parse document</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

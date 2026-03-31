@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}UMDEHUB Dental Learning Platform{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <span class="eyebrow">Built for future dental professionals</span>
+        <h1>UMDEHUB Dental Learning Platform</h1>
+        <p>Strengthen your clinical theory with topic-based revision, instant quiz feedback, and performance tracking designed for dental students.</p>
+        <div class="hero-actions">
+            <a class="button" href="{% url 'login' %}?role=student">Login as Student</a>
+            <a class="button button-secondary" href="{% url 'login' %}?role=admin">Login as Admin</a>
+            <a class="button button-secondary" href="{% url 'users:register' %}">Register</a>
+        </div>
+    </div>
+    <div class="hero-panel">
+        <div class="stat-card">
+            <strong>{{ subject_count }}</strong>
+            <span>Subjects</span>
+        </div>
+        <div class="stat-card">
+            <strong>{{ topic_count }}</strong>
+            <span>Topics</span>
+        </div>
+        <div class="stat-card">
+            <strong>{{ paper_count }}</strong>
+            <span>Past papers</span>
+        </div>
+        <div class="stat-card">
+            <strong>{{ quiz_count }}</strong>
+            <span>Quiz attempts logged</span>
+        </div>
+    </div>
+</section>
+
+<section class="section-grid">
+    <article class="panel">
+        <h2>Featured subjects</h2>
+        <div class="card-grid">
+            {% for subject in featured_subjects %}
+                <a class="feature-card" href="{{ subject.get_absolute_url }}">
+                    <h3>{{ subject.name }}</h3>
+                    <p>{{ subject.description|default:"Structured notes and quizzes ready for review."|truncatechars:100 }}</p>
+                </a>
+            {% empty %}
+                <p>No subjects added yet. Use Django Admin to populate the curriculum.</p>
+            {% endfor %}
+        </div>
+    </article>
+    <article class="panel">
+        <h2>Recent past papers</h2>
+        <div class="list-stack">
+            {% for paper in recent_papers %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ paper.title }}</strong>
+                        <p>{{ paper.subject.name }} • {{ paper.year }}</p>
+                    </div>
+                    <a class="button button-sm" href="{% url 'papers:paper_list' %}">View</a>
+                </div>
+            {% empty %}
+                <p>No past papers uploaded yet.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<section class="section-grid">
+    <article class="panel">
+        <h2>Contribute notes or past papers</h2>
+        <p>Logged-in students can upload notes, past papers, video suggestions, and new topic ideas for admin approval.</p>
+        <a class="button" href="{% url 'contributions:home' %}">Open contribution hub</a>
+    </article>
+    <article class="panel">
+        <h2>Import practice questions</h2>
+        <p>Staff can upload DOCX or text-based PDF files and turn them into quiz questions after choosing the correct answers.</p>
+        {% if user.is_staff %}
+            <a class="button" href="{% url 'contributions:import_questions' %}">Import question document</a>
+        {% else %}
+            <a class="button button-secondary" href="{% url 'login' %}">Staff login required</a>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

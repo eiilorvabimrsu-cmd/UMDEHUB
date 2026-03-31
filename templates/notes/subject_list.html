@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Subjects</span>
+        <h1>Explore dental revision topics</h1>
+        <p>Organized notes and topic pathways to support efficient study sessions.</p>
+    </div>
+</section>
+
+<form class="filter-bar" method="get">
+    <input type="search" name="q" value="{{ query }}" placeholder="Search subjects">
+    <button class="button button-sm" type="submit">Search</button>
+</form>
+
+<section class="card-grid">
+    {% for subject in subjects %}
+        <article class="panel">
+            <h2>{{ subject.name }}</h2>
+            <p>{{ subject.description|default:"Add a subject description from the admin panel to guide students." }}</p>
+            <div class="meta-row">
+                <span>{{ subject.topics.count }} topics</span>
+                <a href="{{ subject.get_absolute_url }}">View topics</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>No subjects found.</p>
+    {% endfor %}
+</section>
+
+{% if user.is_authenticated %}
+<section class="section-grid">
+    <article class="panel">
+        <h2>Want to upload a note?</h2>
+        <p>You can type it directly or upload a DOCX or text-based PDF note for admin review.</p>
+        <a class="button" href="{% url 'contributions:note' %}">Submit note</a>
+    </article>
+    <article class="panel">
+        <h2>Want a new topic added?</h2>
+        <p>Suggest missing content areas and the admin can publish them after review.</p>
+        <a class="button button-secondary" href="{% url 'contributions:topic' %}">Suggest topic</a>
+    </article>
+</section>
+{% endif %}
+{% endblock %}

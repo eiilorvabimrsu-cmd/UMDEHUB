@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic.title }} Notes{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">{{ topic.subject.name }}</span>
+        <h1>{{ topic.title }}</h1>
+        <p>{{ topic.overview|default:"Use these notes as a revision foundation before attempting quiz practice." }}</p>
+    </div>
+    <div class="header-actions">
+        <a class="button" href="{% url 'quizzes:topic_quiz' topic.id %}">Take topic quiz</a>
+    </div>
+</section>
+
+<section class="content-stack">
+    {% for note in topic.notes.all %}
+        <article class="panel note-panel">
+            <h2>{{ note.title }}</h2>
+            <div class="rich-text">{{ note.content|linebreaks }}</div>
+        </article>
+    {% empty %}
+        <article class="panel">
+            <p>No notes added yet for this topic.</p>
+        </article>
+    {% endfor %}
+</section>
+
+<section class="content-stack">
+    <article class="panel">
+        <div class="section-heading">
+            <h2>Suggested study videos</h2>
+            <a href="{% url 'contributions:video' %}">Suggest a video</a>
+        </div>
+        <div class="list-stack">
+            {% for video in videos %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ video.title }}</strong>
+                        <p>{{ video.description|default:"Approved by the admin team for this topic." }}</p>
+                    </div>
+                    <a class="button button-sm" href="{{ video.youtube_url }}" target="_blank" rel="noopener">Watch</a>
+                </div>
+            {% empty %}
+                <p>No approved videos yet for this topic.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

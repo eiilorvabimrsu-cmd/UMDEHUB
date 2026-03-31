@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz_title }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Quiz mode</span>
+        <h1>{{ quiz_title }}</h1>
+        <p>{{ quiz_description }}</p>
+    </div>
+    {% if show_timer %}
+        <div class="timer-card" data-timer="{{ duration_seconds }}">
+            <span>Time remaining</span>
+            <strong id="quiz-timer">30:00</strong>
+        </div>
+    {% endif %}
+</section>
+
+{% if user.is_staff %}
+<section class="panel">
+    <div class="section-heading">
+        <h2>Need to upload questions?</h2>
+        <a href="{% url 'contributions:import_questions' %}">Import DOCX/PDF question file</a>
+    </div>
+    <p>After import, open the batch review page and click the correct answer for each question before publishing.</p>
+</section>
+{% endif %}
+
+{% if subjects %}
+    <form class="filter-bar" method="get">
+        <select name="subject">
+            <option value="">All subjects</option>
+            {% for subject in subjects %}
+                <option value="{{ subject.id }}" {% if selected_subject and selected_subject.id == subject.id %}selected{% endif %}>{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+        <button class="button button-sm" type="submit">Filter</button>
+    </form>
+{% endif %}
+
+<form method="post" class="content-stack" id="quiz-form">
+    {% csrf_token %}
+    {% if started_at %}
+        <input type="hidden" name="started_at" value="{{ started_at }}">
+    {% endif %}
+    {% for question in questions %}
+        <input type="hidden" name="question_ids" value="{{ question.id }}">
+        <article class="panel question-card">
+            <div class="question-header">
+                <span>Question {{ forloop.counter }}</span>
+                <span>{{ question.get_difficulty_display }}</span>
+            </div>
+            <h2>{{ question.text }}</h2>
+            <div class="choice-group">
+                {% for choice in question.choices.all %}
+                    <label class="choice-item">
+                        <input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}">
+                        <span>{{ choice.text }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </article>
+    {% endfor %}
+    <button class="button" type="submit">Submit answers</button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+{% if show_timer %}
+<script>
+    window.quizDurationSeconds = {{ duration_seconds|default:0 }};
+</script>
+{% endif %}
+{% endblock %}

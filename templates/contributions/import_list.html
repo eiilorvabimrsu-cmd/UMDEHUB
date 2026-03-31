@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Question Imports{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Staff question imports</span>
+        <h1>Imported question sets</h1>
+        <p>Open a batch, click the correct answer for each question, then publish the set to quizzes.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button" href="{% url 'contributions:import_questions' %}">New import</a>
+    </div>
+</section>
+
+<section class="card-grid">
+    {% for batch in batches %}
+        <article class="panel">
+            <h2>{{ batch.title }}</h2>
+            <p>{{ batch.subject.name }} • {{ batch.topic.title }}</p>
+            <p>Status: {{ batch.get_status_display }}</p>
+            <p>{{ batch.parser_notes }}</p>
+            {% if batch.scanned_detected %}
+                <span class="score-pill score-pill-low">Scanned PDF detected</span>
+            {% else %}
+                <a href="{% url 'contributions:import_review' batch.id %}">Review batch</a>
+            {% endif %}
+        </article>
+    {% empty %}
+        <p>No imports yet.</p>
+    {% endfor %}
+</section>
+{% endblock %}

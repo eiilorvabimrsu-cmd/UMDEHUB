@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: umdehub-edu-rw
+    env: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn dental_platform.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: umdehub-edu-rw-db
+          property: connectionString
+databases:
+  - name: umdehub-edu-rw-db
+    plan: free

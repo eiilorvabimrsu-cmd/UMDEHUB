@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz History{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">History</span>
+        <h1>Your quiz attempts</h1>
+        <p>Review scores over time and revisit topics that need more work.</p>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Topic / Subject</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td>{{ result.date|date:"M d, Y H:i" }}</td>
+                        <td>{{ result.get_quiz_type_display }}</td>
+                        <td>
+                            {% if result.topic %}
+                                {{ result.topic.title }}
+                            {% elif result.subject %}
+                                {{ result.subject.name }}
+                            {% else %}
+                                Mixed topics
+                            {% endif %}
+                        </td>
+                        <td>{{ result.score }}/{{ result.total_questions }} ({{ result.percentage }}%)</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No quiz results yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

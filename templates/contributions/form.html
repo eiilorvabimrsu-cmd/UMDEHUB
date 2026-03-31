@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Contribution Form{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <article class="panel auth-panel wide-panel">
+        <h1>Submit contribution</h1>
+        <p>Your submission will stay private until the admin approves it. You will receive an email notification after review.</p>
+        <form method="post" enctype="multipart/form-data" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button" type="submit">Send for approval</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

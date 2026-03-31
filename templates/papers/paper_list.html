@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Past Papers{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Past papers</span>
+        <h1>Revision papers and exam archives</h1>
+        <p>Filter by subject or year and open the PDF directly from the platform.</p>
+    </div>
+</section>
+
+<form class="filter-bar filter-grid" method="get">
+    <input type="search" name="q" value="{{ query }}" placeholder="Search papers">
+    <select name="subject">
+        <option value="">All subjects</option>
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}" {% if selected_subject == subject.id|stringformat:"s" %}selected{% endif %}>{{ subject.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="year">
+        <option value="">All years</option>
+        {% for year in years %}
+            <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select>
+    <button class="button button-sm" type="submit">Apply</button>
+</form>
+
+<section class="card-grid">
+    {% for paper in papers %}
+        <article class="panel">
+            <h2>{{ paper.title }}</h2>
+            <p>{{ paper.subject.name }} • {{ paper.year }}</p>
+            <div class="stack-actions">
+                <a href="{{ paper.file.url }}" target="_blank" rel="noopener">Open PDF</a>
+                <a href="{{ paper.file.url }}" download>Download</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>No past papers matched your filters.</p>
+    {% endfor %}
+</section>
+
+{% if user.is_authenticated %}
+<section class="panel">
+    <div class="section-heading">
+        <h2>Upload a past paper</h2>
+        <a href="{% url 'contributions:paper' %}">Submit past paper</a>
+    </div>
+    <p>Students can upload past papers for admin approval before they appear publicly.</p>
+</section>
+{% endif %}
+{% endblock %}
