@@ -5,11 +5,16 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
+from .bootstrap import ensure_bootstrap_admin_user
 from .forms import ProfileForm, UserProfileForm, UserRegistrationForm
 
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        ensure_bootstrap_admin_user()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         user = self.request.user
