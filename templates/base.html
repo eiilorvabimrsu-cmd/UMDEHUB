@@ -11,7 +11,10 @@
     <header class="site-header">
         <div class="container">
             <nav class="navbar">
-                <a class="brand" href="{% url 'home' %}">UMOL'S DENTAL HUB</a>
+                <a class="brand brand-with-logo" href="{% url 'home' %}">
+                    <img src="{% static 'images/udh-logo.png' %}" alt="UMOL'S DENTAL HUB logo" class="brand-logo">
+                    <span>UMOL'S DENTAL HUB</span>
+                </a>
                 <button class="nav-toggle" type="button" aria-label="Toggle navigation" data-nav-toggle>Menu</button>
                 <div class="nav-links" data-nav-menu>
                     <a href="{% url 'home' %}">Home</a>
