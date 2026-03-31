@@ -1,4 +1,4 @@
-# UMDEHUB Dental Learning Platform
+# UMOL'S DENTAL HUB
 
 A production-ready Django MVP for dental students with notes, quizzes, mock exams, past papers, document-to-question import, moderated contributions, and role-aware login for admins and students.
 
