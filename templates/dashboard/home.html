@@ -7,92 +7,54 @@
     <div class="hero-copy">
         <span class="eyebrow">Built for future dental professionals</span>
         <h1>UMOL'S DENTAL HUB</h1>
-        <p>Strengthen your clinical theory with topic-based revision, instant quiz feedback, and performance tracking designed for dental students.</p>
+        <p>Strengthen your clinical theory with guided notes, practical revision, and carefully moderated contributions designed for dental learners and practitioners.</p>
         <div class="hero-actions">
-            <a class="button" href="{% url 'login' %}?role=student">Login as Student</a>
-            <a class="button button-secondary" href="{% url 'login' %}?role=practitioner">Login as Practitioner</a>
-            <a class="button button-secondary" href="{% url 'login' %}?role=admin">Login as Admin</a>
+            <a class="button" href="{% url 'login' %}">Login</a>
             <a class="button button-secondary" href="{% url 'users:register' %}">Register</a>
         </div>
     </div>
-    <div class="hero-panel">
+    <div class="hero-panel single-stat">
         <div class="stat-card">
-            <strong>{{ subject_count }}</strong>
-            <span>Subjects</span>
-        </div>
-        <div class="stat-card">
-            <strong>{{ topic_count }}</strong>
-            <span>Topics</span>
-        </div>
-        <div class="stat-card">
-            <strong>{{ paper_count }}</strong>
-            <span>Past papers</span>
-        </div>
-        <div class="stat-card">
-            <strong>{{ quiz_count }}</strong>
-            <span>Quiz attempts logged</span>
+            <strong>Coming soon</strong>
+            <span>Live activity, usage insights, and more guided study progress will appear here in a future update.</span>
         </div>
     </div>
 </section>
 
 <section class="section-grid">
     <article class="panel">
-        <h2>Featured subjects</h2>
-        <div class="card-grid">
-            {% for subject in featured_subjects %}
-                <a class="feature-card" href="{{ subject.get_absolute_url }}">
-                    <h3>{{ subject.name }}</h3>
-                    <p>{{ subject.description|default:"Structured notes and quizzes ready for review."|truncatechars:100 }}</p>
-                </a>
-            {% empty %}
-                <p>No subjects added yet. Use Django Admin to populate the curriculum.</p>
-            {% endfor %}
+        <h2>Learn</h2>
+        <p>Read structured notes by subject and topic, then explore approved practitioner case studies to deepen understanding with real clinical context.</p>
+        <div class="stack-actions">
+            <a class="button" href="{% url 'notes:subject_list' %}">Open Notes</a>
+            <a class="button button-secondary" href="{% url 'case_studies:case_list' %}">Explore Clinical Cases</a>
         </div>
     </article>
-    <article class="panel">
-        <h2>Recent past papers</h2>
-        <div class="list-stack">
-            {% for paper in recent_papers %}
-                <div class="list-item">
-                    <div>
-                        <strong>{{ paper.title }}</strong>
-                        <p>{{ paper.subject.name }} • {{ paper.year }}</p>
-                    </div>
-                    <a class="button button-sm" href="{% url 'papers:paper_list' %}">View</a>
-                </div>
-            {% empty %}
-                <p>No past papers uploaded yet.</p>
-            {% endfor %}
-        </div>
-    </article>
-</section>
 
-<section class="section-grid">
     <article class="panel">
-        <h2>Learn from practitioner case studies</h2>
-        <p>Students can review approved real-world clinical cases, while practitioners can upload moderated anonymized cases.</p>
-        <a class="button" href="{% url 'case_studies:case_list' %}">Explore case studies</a>
+        <h2>Practice</h2>
+        <p>Use quizzes for active recall and past papers for exam-style preparation. Practice stays focused on revision rather than navigation.</p>
+        <div class="stack-actions">
+            {% if user.is_authenticated and user.profile.is_practitioner and not user.is_staff %}
+                <a class="button" href="{% url 'papers:paper_list' %}">Browse Past Papers</a>
+            {% else %}
+                <a class="button" href="{% url 'quizzes:random_quiz' %}">Start Practice Quiz</a>
+            {% endif %}
+            <a class="button button-secondary" href="{% url 'papers:paper_list' %}">View Past Papers</a>
+        </div>
     </article>
+
     <article class="panel">
-        <h2>Practitioner sign up</h2>
-        <p>Dental therapists and dental surgeons can request practitioner accounts. Admin approval is required before practitioner login is enabled.</p>
-        <a class="button button-secondary" href="{% url 'users:register' %}?role=practitioner">Register as Practitioner</a>
-    </article>
-    {% if not user.is_authenticated or not user.profile.is_practitioner %}
-        <article class="panel">
-            <h2>Contribute notes or past papers</h2>
-            <p>Logged-in students can upload notes, past papers, video suggestions, and new topic ideas for admin approval.</p>
-            <a class="button" href="{% url 'contributions:home' %}">Open contribution hub</a>
-        </article>
-    {% endif %}
-    <article class="panel">
-        <h2>Import practice questions</h2>
-        <p>Staff can upload DOCX or text-based PDF files and turn them into quiz questions after choosing the correct answers.</p>
-        {% if user.is_staff %}
-            <a class="button" href="{% url 'contributions:import_questions' %}">Import question document</a>
-        {% else %}
-            <a class="button button-secondary" href="{% url 'login' %}">Staff login required</a>
-        {% endif %}
+        <h2>Contribute</h2>
+        <p>Students can suggest study resources and questions, while practitioners can submit moderated anonymized clinical cases. Question document import is available in the admin panel only.</p>
+        <div class="stack-actions">
+            {% if user.is_authenticated and user.profile.is_practitioner and not user.is_staff %}
+                <a class="button" href="{% url 'case_studies:practitioner_dashboard' %}">Open Practitioner Area</a>
+            {% else %}
+                <a class="button" href="{% url 'contributions:home' %}">Open Contribution Hub</a>
+            {% endif %}
+            <a class="button button-secondary" href="{% url 'users:register' %}?role=practitioner">Request Practitioner Access</a>
+        </div>
     </article>
 </section>
 {% endblock %}
