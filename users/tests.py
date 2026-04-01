@@ -44,6 +44,29 @@ class UserWorkflowTests(TestCase):
 
         self.assertContains(response, 'awaiting admin approval')
 
+    def test_student_account_cannot_use_admin_login_role(self):
+        User.objects.create_user(username='studentrole', password='StrongPass123!', email='studentrole@example.com')
+
+        response = self.client.post(
+            reverse('login'),
+            {'username': 'studentrole', 'password': 'StrongPass123!', 'login_role': 'admin'},
+        )
+
+        self.assertContains(response, 'This account is not an admin account.')
+
+    def test_practitioner_account_must_use_practitioner_login_role(self):
+        user = User.objects.create_user(username='roleprac', password='StrongPass123!', email='roleprac@example.com')
+        user.profile.role = Profile.PRACTITIONER
+        user.profile.practitioner_approved = True
+        user.profile.save()
+
+        response = self.client.post(
+            reverse('login'),
+            {'username': 'roleprac', 'password': 'StrongPass123!', 'login_role': 'student'},
+        )
+
+        self.assertContains(response, 'Practitioner accounts must use the Practitioner role.')
+
     def test_approved_practitioner_redirects_to_practitioner_dashboard(self):
         user = User.objects.create_user(username='approvedprac', password='StrongPass123!', email='approved@example.com')
         user.profile.role = Profile.PRACTITIONER
