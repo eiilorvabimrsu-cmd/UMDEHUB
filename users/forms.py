@@ -7,15 +7,32 @@ from .models import Profile
 
 
 class UserRegistrationForm(UserCreationForm):
+    ADMIN = 'admin'
+    ROLE_CHOICES = Profile.ROLE_CHOICES + [(ADMIN, 'Admin')]
+
     email = forms.EmailField(required=True)
-    role = forms.ChoiceField(choices=Profile.ROLE_CHOICES)
+    role = forms.ChoiceField(choices=ROLE_CHOICES)
 
     class Meta:
         model = User
         fields = ('username', 'email', 'role', 'password1', 'password2')
 
+    def clean_role(self):
+        role = self.cleaned_data['role']
+        if role == self.ADMIN:
+            raise ValidationError('Admin accounts are created by site administrators. Use Login if you already have one.')
+        return role
+
 
 class RoleAwareAuthenticationForm(AuthenticationForm):
+    login_role = forms.ChoiceField(
+        choices=[
+            (Profile.STUDENT, 'Student'),
+            (Profile.PRACTITIONER, 'Practitioner'),
+            ('admin', 'Admin'),
+        ]
+    )
+
     def confirm_login_allowed(self, user):
         super().confirm_login_allowed(user)
         profile = getattr(user, 'profile', None)
