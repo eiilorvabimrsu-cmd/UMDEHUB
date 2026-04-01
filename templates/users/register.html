@@ -5,18 +5,37 @@
 {% block content %}
 <section class="auth-shell">
     <article class="panel auth-panel wide-panel">
-        <h1>Create student account</h1>
-        <p>Create a student or practitioner account. Practitioner accounts require admin approval before login is allowed.</p>
-        <div class="role-switch">
-            <a class="button {% if selected_role != 'student' %}button-secondary{% endif %}" href="{% url 'users:register' %}?role=student">Register as Student</a>
-            <a class="button {% if selected_role != 'practitioner' %}button-secondary{% endif %}" href="{% url 'users:register' %}?role=practitioner">Register as Practitioner</a>
-        </div>
+        <h1>Register</h1>
+        <p>Select the role you want to register for. Practitioner accounts require admin approval before login is allowed. Admin accounts are created by site administrators.</p>
         <form method="post" class="auth-form">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button class="button" type="submit">
-                {% if selected_role == 'practitioner' %}Request Practitioner Account{% else %}Register{% endif %}
-            </button>
+            {{ form.non_field_errors }}
+            <p>
+                {{ form.role.label_tag }}
+                {{ form.role }}
+                {{ form.role.errors }}
+            </p>
+            <p>
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+            </p>
+            <p>
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {{ form.email.errors }}
+            </p>
+            <p>
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </p>
+            <p>
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </p>
+            <button class="button" type="submit">Continue</button>
         </form>
         <p class="muted-text">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
     </article>
