@@ -2,10 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
-from .bootstrap import ensure_bootstrap_admin_user
 from .forms import (
     ProfileForm,
     RoleAwareAuthenticationForm,
@@ -18,9 +18,11 @@ class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     authentication_form = RoleAwareAuthenticationForm
 
-    def dispatch(self, request, *args, **kwargs):
-        ensure_bootstrap_admin_user()
-        return super().dispatch(request, *args, **kwargs)
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        selected_role = self.request.POST.get('login_role') or self.request.GET.get('role') or 'student'
+        form.fields['login_role'].initial = selected_role
+        return form
 
     def get_success_url(self):
         user = self.request.user
@@ -32,7 +34,7 @@ class CustomLoginView(LoginView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['selected_role'] = self.request.GET.get('role', 'student')
+        context['selected_role'] = self.request.POST.get('login_role') or self.request.GET.get('role', 'student')
         return context
 
 
@@ -40,7 +42,7 @@ def register_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard:overview')
 
-    initial_role = request.GET.get('role')
+    initial_role = request.POST.get('role') or request.GET.get('role')
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -52,6 +54,19 @@ def register_view(request):
             profile.save()
 
             if selected_role == profile.PRACTITIONER:
+                if user.email:
+                    send_mail(
+                        subject='UMOL\'S DENTAL HUB practitioner request received',
+                        message=(
+                            f'Hello {user.username},\n\n'
+                            'Your practitioner account request has been received. '
+                            'Please wait for an admin to review and approve it before logging in as a practitioner.\n\n'
+                            'You will receive another email once your request has been reviewed.'
+                        ),
+                        from_email=None,
+                        recipient_list=[user.email],
+                        fail_silently=True,
+                    )
                 messages.success(
                     request,
                     'Request sent. Wait for admin approval before logging in as a practitioner.',
