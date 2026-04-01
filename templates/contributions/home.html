@@ -9,11 +9,6 @@
         <h1>Help improve UMOL'S DENTAL HUB</h1>
         <p>Students can submit notes, videos, topic ideas, and past papers. Every contribution is reviewed by the admin team before publication.</p>
     </div>
-    {% if user.is_staff %}
-        <div class="header-actions">
-            <a class="button" href="{% url 'contributions:import_questions' %}">Import questions from DOCX/PDF</a>
-        </div>
-    {% endif %}
 </section>
 
 <section class="card-grid">
@@ -38,6 +33,16 @@
         <a href="{% url 'contributions:paper' %}">Upload paper</a>
     </article>
 </section>
+
+{% if user.is_staff %}
+<section class="panel">
+    <div class="section-heading">
+        <h2>Admin-only question import</h2>
+        <span>Admin panel</span>
+    </div>
+    <p>Question document import is managed through the admin interface only so public contributors stay focused on learning resources and moderated submissions.</p>
+</section>
+{% endif %}
 
 <section class="panel">
     <div class="section-heading">
